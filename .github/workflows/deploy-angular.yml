@@ -3,7 +3,10 @@ name: Deploy Angular to GitHub Pages
 on:
   push:
     branches:
-      - main  # Change this if your default branch is different
+      - main  # Change if your default branch is different
+
+permissions:
+  contents: write  # ✅ Allows Actions to push to gh-pages branch
 
 jobs:
   build:
@@ -12,11 +15,13 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
+        with:
+          persist-credentials: false  # Prevents credential issues
 
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 18  # Use the version matching your project
+          node-version: 18  # Match your Angular version
 
       - name: Install Dependencies
         run: npm install
@@ -27,5 +32,6 @@ jobs:
       - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
         with:
-          branch: gh-pages  # Target branch for deployment
-          folder: dist  # Folder where Angular builds the project
+          token: ${{ secrets.GITHUB_TOKEN }}  # ✅ Uses GitHub's built-in token
+          branch: gh-pages  # Target branch
+          folder: dist  # Deploy this folder
